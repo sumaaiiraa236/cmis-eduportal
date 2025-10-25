@@ -1,10 +1,14 @@
-const mongoose = require('mongoose');
+// models/User.js
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
-  role: { type: String, enum: ['admin','staff','faculty','parent'], default: 'staff' },
-  name: String,
-}, { timestamps: true });
+const schema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('User', userSchema);
+// Export directly without creating a "User" variable in this file
+export default mongoose.models.User ?? mongoose.model("User", schema);
