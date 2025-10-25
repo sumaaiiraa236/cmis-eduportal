@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./cmis-frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - VITE_API_BASE_URL=http://backend:5000/api
+      - VITE_APP_NAME=CMIS
+      - VITE_ENABLE_MSW=false
+    depends_on:
+      - backend
+    networks:
+      - cmis-network
+
+  backend:
+    build:
+      context: ./cmis-backend
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/cmis
+      - JWT_SECRET=supersecretjwtkey
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+    networks:
+      - cmis-network
+
+  mongo:
+    image: mongo:6.0
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - cmis-network
+
+networks:
+  cmis-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
